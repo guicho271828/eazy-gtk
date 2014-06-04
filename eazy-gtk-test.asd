@@ -1,19 +1,19 @@
 #|
-  This file is a part of easy-gtk project.
+  This file is a part of eazy-gtk project.
   Copyright (c) 2013 Masataro Asai (guicho2.71828@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage easy-gtk-test-asd
+(defpackage eazy-gtk-test-asd
   (:use :cl :asdf))
-(in-package :easy-gtk-test-asd)
+(in-package :eazy-gtk-test-asd)
 
-(defsystem easy-gtk-test
+(defsystem eazy-gtk-test
   :author "Masataro Asai"
   :license "LLGPL"
-  :depends-on (:easy-gtk
+  :depends-on (:eazy-gtk
                :cl-test-more)
   :components ((:module "t"
                 :components
-                ((:file "easy-gtk"))))
+                ((:file "eazy-gtk"))))
   :perform (load-op :after (op c) (asdf:clear-system c)))

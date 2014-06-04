@@ -1,5 +1,5 @@
 #|
-  This file is a part of easy-gtk project.
+  This file is a part of eazy-gtk project.
   Copyright (c) 2013 Masataro Asai (guicho2.71828@gmail.com)
 |#
 
@@ -10,11 +10,11 @@
 |#
 
 (in-package :cl-user)
-(defpackage easy-gtk-asd
+(defpackage eazy-gtk-asd
   (:use :cl :asdf))
-(in-package :easy-gtk-asd)
+(in-package :eazy-gtk-asd)
 
-(defsystem easy-gtk
+(defsystem eazy-gtk
   :version "0.1"
   :author "Masataro Asai"
   :license "LLGPL"
@@ -28,7 +28,7 @@
                :alexandria)
   :components ((:module "src"
                 :components
-                ((:file "easy-gtk")
+                ((:file "eazy-gtk")
 				 (:file :events)
 				 (:file :graphics))))
   :description "private utility which offers an interactive 2d GUI canvas with  a minimum set of features like scrolling and dragging the view."
@@ -44,4 +44,4 @@
                                :fill-pointer t)))
           (setf (fill-pointer seq) (read-sequence seq stream))
           seq)))
-  :in-order-to ((test-op (load-op easy-gtk-test))))
+  :in-order-to ((test-op (load-op eazy-gtk-test))))

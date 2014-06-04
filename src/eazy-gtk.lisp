@@ -1,10 +1,10 @@
 #|
-  This file is a part of easy-gtk project.
+  This file is a part of eazy-gtk project.
   Copyright (c) 2013 Masataro Asai (guicho2.71828@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage easy-gtk
+(defpackage eazy-gtk
   (:use :cl
 		:annot.doc
 		:anaphora
@@ -15,6 +15,6 @@
 		:gobject
 		:annot.eval-when)
   (:shadow :scale :rotate :range))
-(in-package :easy-gtk)
+(in-package :eazy-gtk)
 
 ;; blah blah blah.

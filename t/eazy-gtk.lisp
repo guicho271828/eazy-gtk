@@ -1,14 +1,14 @@
 #|
-  This file is a part of easy-gtk project.
+  This file is a part of eazy-gtk project.
   Copyright (c) 2013 Masataro Asai (guicho2.71828@gmail.com)
 |#
 
 (in-package :cl-user)
-(defpackage easy-gtk-test
+(defpackage eazy-gtk-test
   (:use :cl
-        :easy-gtk
+        :eazy-gtk
         :cl-test-more))
-(in-package :easy-gtk-test)
+(in-package :eazy-gtk-test)
 
 (plan nil)
 

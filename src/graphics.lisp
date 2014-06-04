@@ -1,5 +1,5 @@
 
-(in-package :easy-gtk)
+(in-package :eazy-gtk)
 (annot:enable-annot-syntax)
 
 @export @doc "opens a new window and a canvas, then refresh it by
