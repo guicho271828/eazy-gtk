@@ -7,8 +7,8 @@ REFLESH-FN with certain intervals specified by
 MILLISECONDS. REFLESH-FN should accept `gtk:drawing-area' as its only
 argument."
 (defun main (reflesh-fn 
-             &optional (milliseconds 100) (title "Main window")
              &key
+               (milliseconds 100) (title "Main window")
                (button-press #'button-press)
                (button-release #'button-release)
                (motion-notify #'motion-notify)
@@ -35,16 +35,23 @@ argument."
      (mapc
       (lambda (pair)
         (destructuring-bind (key fn) pair
-          (gobject:connect-signal window key (lambda () (funcall fn))))
-        `(("button-press-event" ,button-press)
-          ("button-release-event" ,button-release)
-          ("key-press-event" ,key-press)
-          ("key-release-event" ,key-release)
-          ("motion-notify-event" ,motion-notify)
-          ("scroll-event" ,scroll))))
+          (gobject:connect-signal window key (lambda (&rest args)
+                                               (apply fn args)))))
+      `(
+        ("delete-event"
+         ,(lambda (window event)
+                  (declare (ignore window event))
+                  (gtk-main-quit)))
+        ("button-press-event" ,button-press)
+        ("button-release-event" ,button-release)
+        ("key-press-event" ,key-press)
+        ("key-release-event" ,key-release)
+        ("motion-notify-event" ,motion-notify)
+        ("scroll-event" ,scroll)))
      (gtk:gtk-main-add-timeout
       milliseconds
-      (lambda ()
+      (lambda (&rest args)
+        @ignore args
         (funcall reflesh-fn canvas)
         t)))))
 

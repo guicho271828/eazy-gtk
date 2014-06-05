@@ -3,14 +3,16 @@
 (annot:enable-annot-syntax)
 
 ;; translation and scaling in the user space
-(defvar *translation* (2dv* 0 0))
+(defvar *translation* (2dv 0 0))
 (defvar *scale* 0)
 (defvar *stepping-id* nil)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defvar *shared-output* *standard-output*))
 
 (defparameter +pixel-step+ 10)
 (defparameter +scaling-base+ 1.2)
 (defun scaling-factor (x)
-  (expt +scaling-base+ (desired x)))
+  (expt +scaling-base+ x))
 
 (defun scroll-at (x y next-scale)
   (let* ((w (2dv-coerce x y))
@@ -35,20 +37,21 @@
 @doc "the default button-press function"
 (defun button-press (canvas e)
   @ignorable canvas e
-  (format *main-thread-output*
+  (format *shared-output*
           "~%pressed  ~a at: [~a ~a] ~a"
           (event-button-button e)
           (event-button-x e)
           (event-button-y e)
           (event-button-state e))
   (case (event-button-button e)
-    (1 (setf *previous-pointer-position* (2dv (event-button-x e)
-                                              (event-button-y e))))))
+    (1 (setf *previous-pointer-position*
+             (2dv (event-button-x e)
+                  (event-button-y e))))))
 
 @export
 (defun button-release (canvas e)
   @ignorable canvas e
-  (format *main-thread-output*
+  (format *shared-output*
           "~%released ~a at: [~a ~a]"
           (event-button-button e)
           (event-button-x e)
@@ -60,11 +63,12 @@
   @ignorable canvas e
   (cond
     ((member :button1-mask (event-motion-state e))
-     (let ((v2 (2dv (event-motion-x e) (event-motion-y e))))
+     (let ((v *previous-pointer-position*)
+           (v2 (2dv (event-motion-x e) (event-motion-y e))))
        (setf *translation*
              (add *translation*
                   (scale-vector (sub v2 v)
-                                (d/ (scaling-factor *scale*)))))
+                                (/ (scaling-factor *scale*)))))
        (setf *previous-pointer-position* v2)))))
 
 @export
@@ -81,7 +85,7 @@
     (#\> (setf *step-ms* (/ *step-ms* +scaling-base+)))
     (#\r (setf *scale* 0 *translation* (2dv 0.0d0 0.0d0)))
     (#\d
-     (format *main-thread-output*
+     (format *shared-output*
              "~%*scale*: ~a^~a *translation*: ~a"
              +scaling-base+
              *scale*
@@ -113,12 +117,12 @@
                    (scale-vector (2dv-coerce 0 +pixel-step+)
                                  (/ (scaling-factor *scale*))))))
        (t
-        (format *main-thread-output*
+        (format *shared-output*
                 "~%key pressed: ~a keyval: ~a hardware: ~a"
                 (code-char (event-key-keyval e))
                 (event-key-keyval e)
                 (event-key-hardware-keycode e))
-        (force-output *main-thread-output*))))))
+        (force-output *shared-output*))))))
 
 @export
 (defun key-release (canvas e)
@@ -128,7 +132,7 @@
 @export
 (defun scroll (canvas e)
   @ignorable canvas e
-  (format *main-thread-output*
+  (format *shared-output*
           "~%scrolled: ~a at: [~a ~a]"
           (event-scroll-direction e)
           (event-scroll-x e)
