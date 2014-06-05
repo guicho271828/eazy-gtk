@@ -41,7 +41,6 @@
           (event-button-x e)
           (event-button-y e)
           (event-button-state e))
-  
   (case (event-button-button e)
     (1 (setf *previous-pointer-position* (2dv (event-button-x e)
                                               (event-button-y e))))))

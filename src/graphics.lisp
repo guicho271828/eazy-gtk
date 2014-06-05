@@ -58,6 +58,7 @@ argument."
           (funcall fn width height))))))
 
 @eval-always
+@export
 @doc "macro for double-buffering"
 (defmacro with-push-group (&body body)
   `(progn
@@ -67,6 +68,7 @@ argument."
      (cairo:paint)))
 
 @eval-always
+@export
 (defmacro with-context ((&optional width height) canvas &body body)
   (once-only (canvas)
              (unless width (setf width (gensym)))
@@ -78,12 +80,14 @@ argument."
                  ,@body))))
 
 @eval-always
+@export
 (defmacro with-saved-context (&body body)
   `(progn
      (cairo:save cairo:*context*)
      ,@body
      (cairo:restore cairo:*context*)))
 
+@export
 (defun toggle-start-stop (stepper)
   (if *stepping-id*
       (progn (glib:g-source-remove *stepping-id*)
