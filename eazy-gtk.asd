@@ -1,12 +1,12 @@
 #|
-  This file is a part of eazy-gtk project.
-  Copyright (c) 2013 Masataro Asai (guicho2.71828@gmail.com)
+This file is a part of eazy-gtk project.
+Copyright (c) 2013 Masataro Asai (guicho2.71828@gmail.com)
 |#
 
 #|
-  private utility which offers an interactive 2d GUI canvas with  a minimum set of features like scrolling and dragging the view.
+private utility which offers an interactive 2d GUI canvas with  a minimum set of features like scrolling and dragging the view.
 
-  Author: Masataro Asai (guicho2.71828@gmail.com)
+Author: Masataro Asai (guicho2.71828@gmail.com)
 |#
 
 (in-package :cl-user)
@@ -25,12 +25,13 @@
                :cl-gtk2-pango
                :cl-gtk2-gtk
                :iterate
+               :guicho-geometry
                :alexandria)
   :components ((:module "src"
-                :components
-                ((:file "eazy-gtk")
-				 (:file :events)
-				 (:file :graphics))))
+                        :components
+                        ((:file "eazy-gtk")
+                         (:file :events)
+                         (:file :graphics))))
   :description "private utility which offers an interactive 2d GUI canvas with  a minimum set of features like scrolling and dragging the view."
   :long-description
   #.(with-open-file (stream (merge-pathnames

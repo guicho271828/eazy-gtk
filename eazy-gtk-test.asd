@@ -12,7 +12,7 @@
   :author "Masataro Asai"
   :license "LLGPL"
   :depends-on (:eazy-gtk
-               :cl-test-more)
+               :fiveam)
   :components ((:module "t"
                 :components
                 ((:file "eazy-gtk"))))
