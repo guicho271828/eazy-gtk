@@ -174,4 +174,9 @@ scaling and translation is applied"
 @export
 (defun quit (&rest rest)
   (declare (ignore rest))
-  (gtk-main-quit))
+  ;; http://www.crategus.com/books/cl-gtk/gtk-tutorial_2.html
+  ;; the function leave-gtk-main is special for the Lisp binding. It calls
+  ;; internally the C function gtk_main_quit(), but does some extra work to finish
+  ;; the Lisp program. The C function gtk_main_quit() is available in the Lisp
+  ;; binding as gtk-main-quit, but do not call this function in your code.
+  (leave-gtk-main))
