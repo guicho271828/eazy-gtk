@@ -73,7 +73,10 @@ argument."
       (multiple-value-bind (width height)
           (gdk:drawable-get-size drawable)
         (cairo:with-context (ctx)
-          (funcall fn width height))))))
+          (when (and (slot-boundp ctx 'cl-cairo2:width)
+                     (slot-boundp ctx 'cl-cairo2:height)
+                     (slot-boundp ctx 'cl-cairo2:pixel-based-p))
+            (funcall fn width height)))))))
 
 @eval-always
 @export
