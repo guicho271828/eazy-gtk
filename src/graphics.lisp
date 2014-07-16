@@ -79,13 +79,13 @@ argument."
 @export
 @doc "macro for double-buffering"
 (defmacro with-push-group (&body body)
-  `(progn
-     (ignore-errors
-       (cairo:push-group cairo:*context*))
-     ,@body
-     (ignore-errors
-       (cairo:pop-group-to-source cairo:*context*))
-     (cairo:paint)))
+  `(unwind-protect
+        (progn
+          (cairo:push-group)
+          ,@body)
+     (progn
+       (cairo:pop-group-to-source)
+       (cairo:paint))))
 
 @eval-always
 @export
@@ -102,12 +102,11 @@ argument."
 @eval-always
 @export
 (defmacro with-saved-context (&body body)
-  `(progn
-     (ignore-errors
-       (cairo:save cairo:*context*))
-     ,@body
-     (ignore-errors
-       (cairo:restore cairo:*context*))))
+  `(unwind-protect
+        (progn
+          (cairo:save)
+          ,@body)
+     (cairo:restore)))
 
 @export
 (defun toggle-start-stop (stepper)
