@@ -19,7 +19,7 @@
   (expt +scaling-base+ x))
 
 (defun scroll-at (x y next-scale)
-  (let* ((w (2dv-coerce x y))
+  (let* ((w (2dv x y))
          (u (user-space w *translation* *scale*))
          (u-next (user-space w *translation* next-scale)))
     (setf *translation*
