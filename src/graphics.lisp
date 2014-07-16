@@ -73,10 +73,7 @@ argument."
       (multiple-value-bind (width height)
           (gdk:drawable-get-size drawable)
         (cairo:with-context (ctx)
-          (when (and (slot-boundp ctx 'cl-cairo2:width)
-                     (slot-boundp ctx 'cl-cairo2:height)
-                     (slot-boundp ctx 'cl-cairo2:pixel-based-p))
-            (funcall fn width height)))))))
+            (funcall fn width height))))))
 
 @eval-always
 @export
@@ -84,9 +81,10 @@ argument."
 (defmacro with-push-group (&body body)
   `(unwind-protect
         (progn
-          (cairo:push-group)
+          (ignore-errors
+            (cairo:push-group))
           ,@body)
-     (progn
+     (ignore-errors
        (cairo:pop-group-to-source)
        (cairo:paint))))
 
@@ -107,9 +105,11 @@ argument."
 (defmacro with-saved-context (&body body)
   `(unwind-protect
         (progn
-          (cairo:save)
+          (ignore-errors
+            (cairo:save))
           ,@body)
-     (cairo:restore)))
+     (ignore-errors
+       (cairo:restore))))
 
 @export
 (defun toggle-start-stop (stepper)
