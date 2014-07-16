@@ -150,3 +150,7 @@
       (case (event-scroll-direction e)
         (:up 1) (:down -1) (t 0)))))
 
+@export
+(defun quit (&rest rest)
+  (declare (ignore rest))
+  (gtk-main-quit))

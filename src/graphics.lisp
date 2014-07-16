@@ -2,6 +2,15 @@
 (in-package :eazy-gtk)
 (annot:enable-annot-syntax)
 
+(defun safety-wrapper (fn)
+  (tagbody
+   start
+     (return-from safety-wrapper
+       (restart-case (funcall fn)
+         (close-window () (gtk-main-quit))
+         (ignore ())
+         (retry () (go start))))))
+
 @export @doc "opens a new window and a canvas, then refresh it by
 REFLESH-FN with certain intervals specified by
 MILLISECONDS. REFLESH-FN should accept `gtk:drawing-area' as its only
@@ -14,7 +23,8 @@ argument."
                (motion-notify #'motion-notify)
                (key-press #'key-press)
                (key-release #'key-release)
-               (scroll #'scroll))
+               (scroll #'scroll)
+               (quit #'quit))
   (gtk:within-main-loop
    (let ((window (make-instance 'gtk:gtk-window
                                 :type :toplevel
@@ -35,24 +45,25 @@ argument."
      (mapc
       (lambda (pair)
         (destructuring-bind (key fn) pair
-          (gobject:connect-signal window key (lambda (&rest args)
-                                               (apply fn args)))))
-      `(
-        ("delete-event"
-         ,(lambda (window event)
-                  (declare (ignore window event))
-                  (gtk-main-quit)))
+          (gobject:connect-signal
+           window key (lambda (&rest args)
+                        (safety-wrapper
+                         (lambda () (apply fn args)))))))
+      `(("delete-event" ,quit)
         ("button-press-event" ,button-press)
         ("button-release-event" ,button-release)
         ("key-press-event" ,key-press)
         ("key-release-event" ,key-release)
         ("motion-notify-event" ,motion-notify)
-        ("scroll-event" ,scroll)))
+        ("scroll-event" ,scroll)
+        ("destroy" ,quit)))
      (gtk:gtk-main-add-timeout
       milliseconds
       (lambda (&rest args)
         @ignore args
-        (funcall reflesh-fn canvas)
+        (safety-wrapper
+         (lambda ()
+           (funcall reflesh-fn canvas)))
         t)))))
 
 (defun draw-in-context (canvas fn)
