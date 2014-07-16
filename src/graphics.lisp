@@ -56,7 +56,13 @@ argument."
         ("key-release-event" ,key-release)
         ("motion-notify-event" ,motion-notify)
         ("scroll-event" ,scroll)
-        ("destroy" ,quit)))
+        ("destroy" ,quit)
+        ("size-allocate"
+         ,(lambda (widget rectangle)
+            (when (eq widget window)
+              (setf (gtk:widget-size-request canvas)
+                    (multiple-value-list
+                     (gdk:gtk-widget-size-request window))))))))
      (gtk:gtk-main-add-timeout
       milliseconds
       (lambda (&rest args)
