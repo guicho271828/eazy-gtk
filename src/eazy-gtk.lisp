@@ -15,7 +15,8 @@ Copyright (c) 2013 Masataro Asai (guicho2.71828@gmail.com)
         :gobject
         :guicho-geometry
         :annot.eval-when)
-  (:shadow :scale :rotate :range))
+  (:shadow :scale :rotate :range)
+  (:export :apply-current-position))
 (in-package :eazy-gtk)
 
 ;; blah blah blah.

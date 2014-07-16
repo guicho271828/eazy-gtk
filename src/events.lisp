@@ -8,7 +8,11 @@
 (defvar *stepping-id* nil)
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defvar *shared-output* *standard-output*))
-
+(defun apply-current-position ()
+  (let ((factor (scaling-factor *scale*)))
+    (cairo:scale factor factor))
+  (with-slots (x y) *translation*
+    (cairo:translate x y)))
 (defparameter +pixel-step+ 10)
 (defparameter +scaling-base+ 1.2)
 (defun scaling-factor (x)
