@@ -42,11 +42,13 @@
 (defun button-press (canvas e)
   @ignorable canvas e
   (format *shared-output*
-          "~%pressed  ~a at: [~a ~a] ~a"
+          "~%pressed  ~a state: ~a window: [~a ~a] user: ~a"
           (event-button-button e)
+          (event-button-state e)
           (event-button-x e)
           (event-button-y e)
-          (event-button-state e))
+          (user-space (2dv (event-button-x e) (event-button-y e))
+                      *translation* *scale*))
   (case (event-button-button e)
     (1 (setf *previous-pointer-position*
              (2dv (event-button-x e)
