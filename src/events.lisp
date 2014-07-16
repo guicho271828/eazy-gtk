@@ -2,6 +2,14 @@
 (in-package :eazy-gtk)
 (annot:enable-annot-syntax)
 
+(declaim (notinline button-press
+                    button-release
+                    motion-notify
+                    key-press
+                    key-release
+                    scroll
+                    quit))
+
 ;; translation and scaling in the user space
 (defvar *translation* (2dv 0 0))
 (defvar *scale* 0)
