@@ -7,15 +7,12 @@
 (defvar *scale* 0)
 (defvar *stepping-id* nil)
 (eval-when (:compile-toplevel :load-toplevel :execute)
+  @export
   (defvar *shared-output* *standard-output*))
-(defun apply-current-position ()
-  (let ((factor (scaling-factor *scale*)))
-    (cairo:scale factor factor))
-  (with-slots (x y) *translation*
-    (cairo:translate x y)))
 (defparameter +pixel-step+ 10)
 (defparameter +scaling-base+ 1.2)
-(defun scaling-factor (x)
+@export
+(defun scaling-factor (&optional (x *scale*))
   (expt +scaling-base+ x))
 
 (defun scroll-at (x y next-scale)
@@ -26,16 +23,32 @@
           (add *translation* (sub u-next u)))
     (setf *scale* next-scale)))
 
-(defun user-space (window-v translation scale)
+@export
+(defun user-space (window-v &optional
+                              (translation *translation*)
+                              (scale *scale*))
   (sub (scale-vector window-v
                      (/ (scaling-factor scale)))
        translation))
 
-(defun window-space (user-v translation scale)
+@export
+(defun window-space (user-v  &optional
+                              (translation *translation*)
+                              (scale *scale*))
   (scale-vector (add user-v translation)
                 (scaling-factor scale)))
 
+@export
 (defvar *previous-pointer-position* nil)
+
+@export
+(defun apply-current-position ()
+  "call within with-saved-context so that the current
+scaling and translation is applied"
+  (let ((factor (scaling-factor)))
+    (cairo:scale factor factor))
+  (with-slots (x y) *translation*
+    (cairo:translate x y)))
 
 @export
 @doc "the default button-press function"
@@ -74,7 +87,7 @@
        (setf *translation*
              (add *translation*
                   (scale-vector (sub v2 v)
-                                (/ (scaling-factor *scale*)))))
+                                (/ (scaling-factor)))))
        (setf *previous-pointer-position* v2)))))
 
 @export
@@ -87,8 +100,8 @@
     (#\- (multiple-value-bind (width height)
              (gdk:drawable-get-size (widget-window canvas))
            (scroll-at (/ width 2) (/ height 2) (- *scale* 1))))
-    (#\< (setf *step-ms* (* *step-ms* +scaling-base+)))
-    (#\> (setf *step-ms* (/ *step-ms* +scaling-base+)))
+    ;; (#\< (setf *step-ms* (* *step-ms* +scaling-base+)))
+    ;; (#\> (setf *step-ms* (/ *step-ms* +scaling-base+)))
     (#\r (setf *scale* 0 *translation* (2dv 0.0d0 0.0d0)))
     (#\d
      (format *shared-output*
@@ -102,26 +115,26 @@
         ;;left
         (setf *translation*
               (add *translation*
-                   (scale-vector (2dv-coerce +pixel-step+ 0)
-                                 (/ (scaling-factor *scale*))))))
+                   (scale-vector (2dv +pixel-step+ 0)
+                                 (/ (scaling-factor))))))
        (65363
         ;; right
         (setf *translation*
               (add *translation*
-                   (scale-vector (2dv-coerce (- +pixel-step+) 0)
-                                 (/ (scaling-factor *scale*))))))
+                   (scale-vector (2dv (- +pixel-step+) 0)
+                                 (/ (scaling-factor))))))
        (65362
         ;; up
         (setf *translation*
               (add *translation*
-                   (scale-vector (2dv-coerce 0 (- +pixel-step+))
-                                 (/ (scaling-factor *scale*))))))
+                   (scale-vector (2dv 0 (- +pixel-step+))
+                                 (/ (scaling-factor))))))
        (65364
         ;; down
         (setf *translation*
               (add *translation*
-                   (scale-vector (2dv-coerce 0 +pixel-step+)
-                                 (/ (scaling-factor *scale*))))))
+                   (scale-vector (2dv 0 +pixel-step+)
+                                 (/ (scaling-factor))))))
        (t
         (format *shared-output*
                 "~%key pressed: ~a keyval: ~a hardware: ~a"

@@ -17,7 +17,7 @@ MILLISECONDS. REFLESH-FN should accept `gtk:drawing-area' as its only
 argument."
 (defun main (reflesh-fn 
              &key
-               (milliseconds 100) (title "Main window")
+               (milliseconds 17) (title "Main window")
                (button-press #'button-press)
                (button-release #'button-release)
                (motion-notify #'motion-notify)
@@ -80,30 +80,34 @@ argument."
 @doc "macro for double-buffering"
 (defmacro with-push-group (&body body)
   `(progn
-     (cairo:push-group cairo:*context*)
+     (ignore-errors
+       (cairo:push-group cairo:*context*))
      ,@body
-     (cairo:pop-group-to-source cairo:*context*)
+     (ignore-errors
+       (cairo:pop-group-to-source cairo:*context*))
      (cairo:paint)))
 
 @eval-always
 @export
 (defmacro with-context ((&optional width height) canvas &body body)
   (once-only (canvas)
-             (unless width (setf width (gensym)))
-             (unless height (setf height (gensym)))
-             `(draw-in-context
-               ,canvas
-               (lambda (,width ,height)
-                 (declare (ignorable ,width ,height))
-                 ,@body))))
+    (unless width (setf width (gensym)))
+    (unless height (setf height (gensym)))
+    `(draw-in-context
+      ,canvas
+      (lambda (,width ,height)
+        (declare (ignorable ,width ,height))
+        ,@body))))
 
 @eval-always
 @export
 (defmacro with-saved-context (&body body)
   `(progn
-     (cairo:save cairo:*context*)
+     (ignore-errors
+       (cairo:save cairo:*context*))
      ,@body
-     (cairo:restore cairo:*context*)))
+     (ignore-errors
+       (cairo:restore cairo:*context*))))
 
 @export
 (defun toggle-start-stop (stepper)
