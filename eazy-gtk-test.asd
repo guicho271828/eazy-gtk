@@ -12,6 +12,10 @@
   :author "Masataro Asai"
   :license "LLGPL"
   :depends-on (:eazy-gtk
+               :iterate
+               :optima
+               :function-cache
+               :guicho-geometry
                :fiveam)
   :components ((:module "t"
                 :components
